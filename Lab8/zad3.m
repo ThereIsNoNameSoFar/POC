@@ -25,6 +25,7 @@ figure(2);
 lines = houghlines(kwadraty,theta,rho,peaks,'FillGap',5,'MinLength',7);
 imshow(kwadraty);
 hold on;
+axis on, axis normal;
 max_len = 0;
 for k = 1:length(lines)
    xy = [lines(k).point1; lines(k).point2];
