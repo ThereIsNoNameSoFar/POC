@@ -4,27 +4,21 @@ kwadraty = imread('kwadraty.png');
 
 canny_kwadraty = edge(kwadraty, 'canny');
 [H, theta, rho] = hough(canny_kwadraty);
-peaks = houghpeaks(H, 8);
+hough_peak = houghpeaks(H, 8);
 
-figure(1);
+figure();
 subplot(2,2,1);
 imshow(kwadraty,[]);
 subplot(2,2,2);
 imshow(canny_kwadraty,[]);
 subplot(2,2,3);
-imshow(H,[],'XData',theta,'YData',rho,'InitialMagnification','fit');
+imshow(H,[]);
 hold on;
-x = theta(peaks(:,2)); y = rho(peaks(:,1));
-plot(x,y,'o');
-xlabel('\theta'), ylabel('\rho');
-axis on, axis normal;
-axis off;
+plot(hough_peak, 'o');
 hold off;
 
-figure(2);
-lines = houghlines(kwadraty,theta,rho,peaks,'FillGap',5,'MinLength',7);
-imshow(kwadraty);
-hold on;
+lines = houghlines(kwadraty,theta,rho,P,'FillGap',5,'MinLength',7);
+figure, imshow(rotI), hold on
 max_len = 0;
 for k = 1:length(lines)
    xy = [lines(k).point1; lines(k).point2];
@@ -41,4 +35,3 @@ for k = 1:length(lines)
       xy_long = xy;
    end
 end
-hold off;
