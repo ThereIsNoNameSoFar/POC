@@ -22,7 +22,7 @@ axis off;
 hold off;
 
 figure(2);
-lines = houghlines(kwadraty,theta,rho,peaks,'FillGap',5,'MinLength',7);
+lines = houghlines(canny_kwadraty,theta,rho,peaks,'FillGap',5,'MinLength',7);
 imshow(kwadraty);
 hold on;
 axis on, axis normal;

@@ -3,10 +3,10 @@ close all; clearvars; clc;
 lab112 = imread('lab112.png');
 
 figure(1);
-binaryzation = uint8(im2bw(lab112, 0.2)) * 255;
-se_disk = strel('disk', 6);
-cl = imclose(binaryzation, se_disk);
-canny_lab112 = edge(cl, 'canny');
+binaryzation = uint8(im2bw(lab112, 0.168)) * 255;
+se_disk = strel('disk', 3);
+dl = imdilate(binaryzation, se_disk);
+canny_lab112 = edge(dl, 'canny');
 imshow(canny_lab112);
 
 figure(2);
@@ -46,7 +46,7 @@ subplot(2,1,2);
 imshow(H,[],'XData',theta,'YData',rho,'InitialMagnification','fit');
 hold on;
 x = theta(peaks(:,2)); y = rho(peaks(:,1));
-plot(x,y,'o');
+plot(x,y,'ro');
 xlabel('\theta'), ylabel('\rho');
 axis on, axis normal;
 axis off;
