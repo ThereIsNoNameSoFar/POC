@@ -28,8 +28,9 @@ x = 0:0.1:10;
 y= (q - x*cosd(th))/sind(th);
 
 figure(3);
-imshow(img,[]);
+imshow(img, []);
 hold on;
+axis on; axis normal;
 plot(x+1,y+1);
 hold off;
 
