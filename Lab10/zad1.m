@@ -55,7 +55,7 @@ imshow(label2rgb(labels2));
 
 
 function tab_res = union(p, q, tab)
-    tab(p) = q;
+    tab(root(p, tab)) = root(q, tab);
     tab_res = tab;
 end
 
