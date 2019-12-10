@@ -4,22 +4,23 @@ knee = imread('knee.png');
 
 imshow(knee);
 
-seed = floor(ginput(1));
-%seed = [100, 100];
+knee = double(knee);
 
-visited = logical(zeros(size(knee)));
+seed = floor(ginput(1));
+
+seed = [seed(2), seed(1)];
+
+visited = zeros(size(knee));
 segmented = zeros(size(knee));
 
 iStack = 1;
 stack = zeros([10000,2]);
 
-point(1) = seed(2);
-point(2) = seed(1);
-visited(point(1),point(2)) = 1;
-stack(iStack,:) = point;
-segmented(point(1),point(2)) = 1;
+visited(seed(1),seed(2)) = 1;
+stack(iStack,:) = [seed(1), seed(2)];
+segmented(seed(1),seed(2)) = knee(seed(1),seed(2));
 
-threshold = 4;
+threshold = 30;
 
 mV = 0;
 ns = 0;
@@ -27,25 +28,25 @@ ns = 0;
 imageSize = size(knee);
 
 while(iStack > 0)
-    prevPoint = stack(iStack,:);
-    stack(iStack, :) = [0, 0];
+    pX = stack(iStack,1);
+    pY = stack(iStack,2);
     iStack = iStack - 1;
     ns = ns + 1;
-    mV = (mV * (ns - 1) + knee(prevPoint(2),prevPoint(1)))/ns;
-    if(prevPoint(1) < 2 || prevPoint(2) < 2 || prevPoint(1) > (imageSize(1) - 1) || prevPoint(2) > (imageSize(2) - 1))
+    mV = (mV * (ns - 1) + knee(pX,pY))/ns;
+    if(pX < 2 || pY < 2 || pX > (imageSize(1) - 1) || pY > (imageSize(2) - 1))
         continue;
     end
-    
     for I = -1:1
         for J = -1:1
-            point = prevPoint + [I, J];
-            if(visited(point(1),point(2)) == 0)
-                visited(point(1),point(2)) = 1;
-                diff = abs(mV - knee(point(1),point(2)));
+            nX = pX + I;
+            nY = pY + J;
+            if(nX ~= pX && nY ~= pY && visited(nX,nY) == 0)
+                visited(nX,nY) = 1;
+                diff = abs(mV - knee(nX,nY));
                 if(diff < threshold)
-                    segmented(point(1),point(2)) = 1;
+                    segmented(nX,nY) = knee(nX,nY);
                     iStack = iStack + 1;
-                    stack(iStack, :) = point;
+                    stack(iStack, :) = [nX,nY];
                 end
             end
         end
@@ -53,5 +54,5 @@ while(iStack > 0)
 end
 
 figure();
-imshow(segmented);
+imshow(segmented, []);
 
