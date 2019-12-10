@@ -1,0 +1,12 @@
+close all; clearvars; clc;
+
+ccl2 = imread('ccl2.png');
+
+image = ccl2;
+
+figure;
+imshow(image);
+
+figure;
+img_bw_4 = bwlabel(image, 4);
+imshow(
