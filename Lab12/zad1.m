@@ -8,51 +8,27 @@ imshow(lilia);
 %% Encoding
 liliaYUV = rgb2ycbcr(lilia);
 
-liliaYUVsigned = double(liliaYUV) - 128.0;
+Fdct2(:,:,1) = blkproc(liliaYUV(:,:,1), [8 8], @dct2);
+Fdct2(:,:,2) = blkproc(liliaYUV(:,:,2), [8 8], @dct2);
+Fdct2(:,:,3) = blkproc(liliaYUV(:,:,3), [8 8], @dct2);
 
-[sizeY, sizeX, colorsCount] = size(liliaYUVsigned);
+c = 5;
 
-Fdct = dct(liliaYUVsigned, [], 1);
-Fdct2 = dct(Fdct, [], 2);
-
-c = 1;
-
-Z = liliaYUVsigned;
-
-for X = 1:sizeX
-    for Y = 1:sizeY
-        Z(Y,X,1) = round(Fdct2(Y,X,1)/(c*Qy(mod(X,8)+1,mod(Y,8)+1)));
-    end
-end
-
-for C = 2:3
-    for X = 1:sizeX
-        for Y = 1:sizeY
-            Z(Y,X,C) = round(Fdct2(Y,X,C)/(c*Qc(mod(X,8)+1,mod(Y,8)+1)));
-        end
-    end
-end
+Z(:,:,1) = blkproc(Fdct2(:,:,1), [8 8], (@(x) round(x ./ (c*Qy))));
+Z(:,:,2) = blkproc(Fdct2(:,:,2), [8 8], (@(x) round(x ./ (c*Qc))));
+Z(:,:,3) = blkproc(Fdct2(:,:,3), [8 8], (@(x) round(x ./ (c*Qc))));
 
 %% Decoding
-Fidct2 = Z;
-for X = 1:sizeX
-    for Y = 1:sizeY
-        Fidct2(Y,X,1) = Z(Y,X,1)*c*Qy(mod(X,8)+1,mod(Y,8)+1);
-    end
-end
 
-for C = 2:3
-    for X = 1:sizeX
-        for Y = 1:sizeY
-        Fidct2(Y,X,C) = Z(Y,X,C)*c*Qc(mod(X,8)+1,mod(Y,8)+1);
-        end
-    end
-end
+Fidct2(:,:,1) = blkproc(Z(:,:,1), [8 8], (@(x) x .* (c*Qy)));
+Fidct2(:,:,2) = blkproc(Z(:,:,2), [8 8], (@(x) x .* (c*Qc)));
+Fidct2(:,:,3) = blkproc(Z(:,:,3), [8 8], (@(x) x .* (c*Qc)));
 
-Fidct = idct(Fidct2, [], 2);
-decImgYUVsigned = idct(Fidct2, [], 1);
-decImgYUV = uint8(round(decImgYUVsigned + 128.0));
-decImgRgb = ycbcr2rgb(decImgYUV);
+decImgYUV(:,:,1) = blkproc(Fidct2(:,:,1), [8 8], @idct2);
+decImgYUV(:,:,2) = blkproc(Fidct2(:,:,2), [8 8], @idct2);
+decImgYUV(:,:,3) = blkproc(Fidct2(:,:,3), [8 8], @idct2);
+
+decImgRgb = ycbcr2rgb(uint8(decImgYUV));
 figure;
 imshow(decImgRgb);
 
